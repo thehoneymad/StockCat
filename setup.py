@@ -8,6 +8,6 @@ setup(
     author='thehoneymad',
     license='MIT',
     packages=find_packages(),
-    install_requires=['click', 'yfinance', 'tabulate'],
+    install_requires=['click', 'alpha_vantage', 'tabulate'],
     scripts=['bin/stock_cat'],
     zip_safe=False)
