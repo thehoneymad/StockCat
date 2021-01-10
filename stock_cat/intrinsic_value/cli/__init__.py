@@ -1,11 +1,7 @@
 import click
 
 
-@click.command()
+@click.command(name='intrinsic_value')
 @click.option('--ticker', prompt='ticker', help='Stock ticker to analyze. For example, MSFT')
-def stock_cat(ticker):
+def command_intrinsic_value(ticker):
     click.echo(f'Selected stock ticker is {ticker}')
-
-
-if __name__ == '__main__':
-    stock_cat()

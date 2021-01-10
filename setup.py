@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='stock_cat',
@@ -7,6 +7,7 @@ setup(
     url='https://github.com/thehoneymad/StockCat',
     author='thehoneymad',
     license='MIT',
-    packages=['stock_cat'],
+    packages=find_packages(),
     install_requires=['click', 'yfinance', 'yahoo-finance'],
+    scripts=['bin/stock_cat'],
     zip_safe=False)
