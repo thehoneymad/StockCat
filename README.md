@@ -8,6 +8,16 @@ To use, you will need a Alpha Vantage API key. To set it, execute
 export ALPHAVANTAGE_API_KEY=<YOUR_API_KEY>
 ```
 
+To install dependencies and what not of StockCat execute,
+```bash
+python3 setup.py install
+```
+
+You can also use 
+```bash
+python3 setup.py develop
+```
+
 To invoke StockCat execute,
 ```bash
 bin/stock_cat
@@ -24,7 +34,7 @@ Commands:
   intrinsic_value
 ```
 
-To see intrinsic value of a stock (currently in development), execute 
+To see intrinsic value of a stock, execute
 ```bash
 bin/stock_cat intrinsic_value --ticker <SYMBOL>
 ```

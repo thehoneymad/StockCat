@@ -1,7 +1,7 @@
-import os
 from os import getenv
 
 import click
+from pandas import DataFrame
 from tabulate import tabulate
 
 from stock_cat.intrinsic_value.intrinsic_value import IntrinsicValueRecipe
@@ -32,12 +32,28 @@ def command_intrinsic_value(ticker):
     past_eps_trend = recipe.get_past_eps_trend(max_years=10)
     click.secho(tabulate(past_eps_trend, tablefmt='github', headers="keys"), fg='yellow')
 
-    avg_eps_growth_idx = 0
+    avg_eps_growth_idx = 1
     avg_eps_growth = past_eps_trend.at[avg_eps_growth_idx, 'avgEpsGrowthPercent']
 
     avg_eps_growth_idx = click.prompt(
-        '\n Select average EPS growth percentage. Select index from the table above. \n'
-        f'Current default is at index 0 : {avg_eps_growth}', default=0, type=int)
+        '\nSelect average EPS growth percentage. Select index from the table above. \n'
+        f'Current default is at index 0 : {avg_eps_growth}', default=avg_eps_growth_idx, type=int)
 
     avg_eps_growth = past_eps_trend.at[avg_eps_growth_idx, 'avgEpsGrowthPercent']
+    eps = past_eps_trend.at[avg_eps_growth_idx, 'reportedEPS']
     click.secho(f'\nSelected average EPS growth for past 10 years is {avg_eps_growth}% \n', fg='yellow')
+    click.secho(f'\nSelected last EPS for past 10 years is {eps}% \n', fg='yellow')
+
+    discount_rate: float = recipe.get_default_discount_rate()
+    discount_rate = click.prompt(f'What should be our discount rate?', default=discount_rate, type=float)
+    click.secho(f'\nSelected discount rate {discount_rate}%', fg='blue')
+
+    click.echo(f'\nFetching future 10 years EPS trend with last eps {eps} and average eps growth {avg_eps_growth}\n')
+    future_eps_trend: DataFrame = recipe.get_future_eps_trend(eps=eps, avg_eps_growth_pct=avg_eps_growth,
+                                                              discount_rate=discount_rate, years=75)
+    click.secho(tabulate(future_eps_trend, tablefmt='github', headers="keys"), fg='yellow')
+
+    intrinsic_value = recipe.get_intrinsic_value(
+        discounted_present_value_series=(future_eps_trend['discountedPresentValue']))
+
+    click.secho(f'\nCalculated intrinsic value of the stock is {intrinsic_value}', fg='red')
