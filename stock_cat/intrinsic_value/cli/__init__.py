@@ -23,6 +23,11 @@ def command_intrinsic_value(ticker):
             f'Execute `export ALPHAVANTAGE_API_KEY={av_api_key}` to stop this prompt.', fg='blue', blink=True))
 
     recipe = IntrinsicValueRecipe(ticker=ticker, av_api_key=av_api_key)
-    fundamentals_table = recipe.get_ticker_fundamentals(as_table=True)
 
-    click.secho(tabulate(fundamentals_table, tablefmt="github"), fg='green')
+    click.echo(f'\nFetching {ticker} fundamentals \n')
+    fundamentals_table = recipe.get_ticker_fundamentals(as_table=True)
+    click.secho(tabulate(fundamentals_table, tablefmt='github'), fg='green')
+
+    click.echo('\nFetching past 10 years EPS trend \n')
+    past_eps_trend = recipe.get_past_eps_trend(max_years=10)
+    click.echo(tabulate(past_eps_trend, tablefmt='github', headers="keys"))

@@ -8,6 +8,6 @@ setup(
     author='thehoneymad',
     license='MIT',
     packages=find_packages(),
-    install_requires=['click', 'alpha_vantage', 'tabulate'],
+    install_requires=['click', 'alpha_vantage', 'tabulate', 'pandas'],
     scripts=['bin/stock_cat'],
     zip_safe=False)
