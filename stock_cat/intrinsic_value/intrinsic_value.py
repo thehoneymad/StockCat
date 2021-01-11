@@ -1,3 +1,4 @@
+from statistics import mean
 from typing import Union, List, Any
 
 import numpy as np
@@ -13,6 +14,7 @@ DictTable = List[dict]
 class IntrinsicValueRecipe:
     __summary_keys = ['Symbol', 'Name', 'Exchange', 'Currency', 'EPS', 'Beta', 'PERatio',
                       '200DayMovingAverage', '50DayMovingAverage']
+    ___eps_growth_avg_window_years = 3
 
     def __init__(self, ticker: str, av_api_key: str) -> None:
         self.__ticker = ticker
@@ -37,11 +39,17 @@ class IntrinsicValueRecipe:
         trend_len = min(len(earnings), max_years + 1)
 
         past_eps_trend_df: DataFrame = earnings.head(trend_len).copy(deep=True)
-        past_eps_trend_df.insert(2, "epsGrowthPercent", 0.0)
+        past_eps_trend_df['reportedEPS'] = past_eps_trend_df['reportedEPS'].astype(float)
+        past_eps_trend_df.insert(len(past_eps_trend_df.columns), 'epsGrowthPercent', 0.0)
+        past_eps_trend_df.insert(len(past_eps_trend_df.columns), 'avgEpsGrowthPercent', 0.0)
 
         for i in range(0, len(past_eps_trend_df) - 1):
             past_eps_trend_df.loc[i, 'epsGrowthPercent'] = \
-            ((float(past_eps_trend_df.loc[i, 'reportedEPS'])
-              / float(past_eps_trend_df.loc[i + 1, 'reportedEPS'])) - 1.0) * 100
+                ((past_eps_trend_df.loc[i, 'reportedEPS'] / past_eps_trend_df.loc[i + 1, 'reportedEPS']) - 1.0) * 100
 
-        return past_eps_trend_df.head(trend_len - 1)
+        for i in range(0, len(past_eps_trend_df) - self.___eps_growth_avg_window_years):
+            past_eps_trend_df.loc[i, 'avgEpsGrowthPercent'] = \
+                past_eps_trend_df.loc[i:i + self.___eps_growth_avg_window_years, 'epsGrowthPercent'].mean()
+
+        ret = past_eps_trend_df.head(trend_len - 1)
+        return ret

@@ -23,3 +23,8 @@ Options:
 Commands:
   intrinsic_value
 ```
+
+To see intrinsic value of a stock (currently in development), execute 
+```bash
+bin/stock_cat intrinsic_value --ticker <SYMBOL>
+```

@@ -30,4 +30,14 @@ def command_intrinsic_value(ticker):
 
     click.echo('\nFetching past 10 years EPS trend \n')
     past_eps_trend = recipe.get_past_eps_trend(max_years=10)
-    click.echo(tabulate(past_eps_trend, tablefmt='github', headers="keys"))
+    click.secho(tabulate(past_eps_trend, tablefmt='github', headers="keys"), fg='yellow')
+
+    avg_eps_growth_idx = 0
+    avg_eps_growth = past_eps_trend.at[avg_eps_growth_idx, 'avgEpsGrowthPercent']
+
+    avg_eps_growth_idx = click.prompt(
+        '\n Select average EPS growth percentage. Select index from the table above. \n'
+        f'Current default is at index 0 : {avg_eps_growth}', default=0, type=int)
+
+    avg_eps_growth = past_eps_trend.at[avg_eps_growth_idx, 'avgEpsGrowthPercent']
+    click.secho(f'\nSelected average EPS growth for past 10 years is {avg_eps_growth}% \n', fg='yellow')
